@@ -53,8 +53,8 @@
 	root = ~/.ghq
 
 [user]
-email = {{ (bitwarden "Git User Email").notes }}
-name = {{ (bitwarden "Git User Name").notes }}
+ email = {{ (bitwarden "item" "Git User Email").notes }}
+ name = {{ (bitwarden "item" "Git User Name").notes }}
 
 [credential "https://github.com"]
 	helper = !/usr/bin/gh auth git-credential
