@@ -53,8 +53,8 @@
 	root = ~/.ghq
 
 [user]
-	name = joaofelipegalvao
-	email = 176946005+joaofelipegalvao@users.noreply.github.com
+email = {{ (bitwarden "Git User Email").notes }}
+name = {{ (bitwarden "Git User Name").notes }}
 
 [credential "https://github.com"]
 	helper = !/usr/bin/gh auth git-credential
