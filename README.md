@@ -35,8 +35,6 @@ The idea is that Chezmoi uses templates like `dot_config/git/config.tmpl`, mergi
 ~/.config/git/config
 ```
 
----
-
 ## Editing your templates
 
 Always remember to edit the **templates**, never the generated files.
@@ -48,8 +46,6 @@ $ chezmoi cd             # enters the main dotfiles directory
 $ chezmoi edit ~/.zshrc  # opens the corresponding template in your editor
 ```
 
----
-
 ## Adding new dotfiles
 
 If you create a new configuration file — for example, you started using Tmux or Yazi — add it like this:
@@ -59,8 +55,6 @@ $ chezmoi add --autotemplate ~/.config/yazi/yazi.toml
 ```
 
 The `--autotemplate` flag makes Chezmoi automatically identify parts that should become template variables.
-
----
 
 ## Working with sensitive data (Bitwarden)
 
@@ -80,8 +74,6 @@ To view all data being used by Chezmoi:
 $ chezmoi data
 ```
 
----
-
 ## Updating your environment
 
 Whenever you change a template or data file:
@@ -96,8 +88,6 @@ To pull updates from the remote repository:
 $ chezmoi update
 ```
 
----
-
 ## Saving changes to the repository
 
 After updating your dotfiles:
@@ -108,8 +98,6 @@ $ git add .
 $ git commit -m "Update dotfiles"
 $ git push
 ```
-
----
 
 ## Repository structure
 
@@ -124,8 +112,6 @@ dot_config/
 ```
 
 Each directory automatically maps to `~/.config/*` when Chezmoi applies the changes.
-
----
 
 ## About
 
