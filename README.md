@@ -50,8 +50,8 @@ Always remember to edit the **templates**, never the generated files.
 Chezmoi provides useful tools:
 
 ```sh
-chezmoi cd             # enters the main dotfiles directory
-chezmoi edit ~/.zshrc  # opens the corresponding template in your editor
+chezmoi cd  # enters the main dotfiles directory
+chezmoi edit ~/.config/zsh/.zshrc  # opens the corresponding template in your editor
 ```
 
 ## Adding new dotfiles
