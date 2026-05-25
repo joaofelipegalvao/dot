@@ -7,6 +7,7 @@ All configuration is managed by **Chezmoi**, with sensitive data loaded via **Bi
 
 - [Chezmoi](https://www.chezmoi.io/install/) installed
 - Bitwarden CLI (`bw`) configured and logged in
+- [pre-commit](https://pre-commit.com/) and [gitleaks](https://github.com/gitleaks/gitleaks) installed
 
 ## Installation
 
@@ -33,6 +34,13 @@ The idea is that Chezmoi uses templates like `dot_config/git/config.tmpl`, mergi
 
 ```
 ~/.config/git/config
+```
+
+After initializing, activate the pre-commit hook:
+
+```sh
+chezmoi cd
+pre-commit install
 ```
 
 ## Editing your templates
@@ -74,6 +82,22 @@ To view all data being used by Chezmoi:
 
 ```sh
 chezmoi data
+```
+
+## Security
+
+This repository uses [gitleaks](https://github.com/gitleaks/gitleaks) as a pre-commit hook to automatically scan for secrets before every commit. If a secret is detected, the commit is blocked.
+
+The hook runs automatically after `pre-commit install`. To update gitleaks to the latest version:
+
+```sh
+pre-commit autoupdate
+```
+
+To scan the full git history for any leaked secrets:
+
+```sh
+gitleaks detect --log-opts="--all"
 ```
 
 ## Updating your environment
