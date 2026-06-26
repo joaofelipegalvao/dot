@@ -1,0 +1,81 @@
+(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font" :size 16)
+      doom-variable-pitch-font (font-spec :family "CaskaydiaCove Nerd Font" :size 16))
+
+(setq display-line-numbers-type 'relative)
+
+(setq fancy-splash-image
+      (expand-file-name "banners/emacs.png" doom-user-dir))
+
+(add-to-list 'custom-theme-load-path
+             (expand-file-name "themes/" doom-user-dir))
+
+(defconst joao/omarchy-theme-file
+  (expand-file-name "theme.name"
+                    "~/.config/omarchy/current"))
+
+(defvar joao/current-omarchy-theme nil)
+(defvar joao/omarchy-theme-timer nil)
+
+(defun joao/omarchy-theme-name ()
+  "Return the current Omarchy theme name."
+  (when (file-readable-p joao/omarchy-theme-file)
+    (string-trim
+     (with-temp-buffer
+       (insert-file-contents joao/omarchy-theme-file)
+       (buffer-string)))))
+
+(defun joao/omarchy-to-doom-theme (theme)
+  "Convert an Omarchy theme name to its Doom equivalent."
+  (pcase theme
+    ("tokyo-night"      'doom-tokyo-night)
+    ("catppuccin"       'doom-catppuccin-mocha)
+    ("catppuccin-latte" 'doom-catppuccin-latte)
+    ("gruvbox"          'doom-gruvbox)
+    ("rose-pine"        'doom-rose-pine-dawn)
+    ("kanagawa"         'doom-kanagawa)
+    ("nord"             'doom-nord)
+    ("everforest"       'doom-everforest-soft)
+    ("hackerman"        'doom-hackerman)
+    ("vantablack"       'doom-vantablack)
+    ("miasma"           'doom-miasma)
+    ("ristretto"        'doom-monokai-ristretto)
+    ("ethereal"         'doom-ethereal)
+    ("matte-black"      'doom-matte-black)
+    ("lumon"            'doom-lumon)
+    ("white"            'doom-white)
+    ("flexoki-light"    'doom-flexoki-light)
+    ("retro-82"         'doom-retro82)
+    ("osaka-jade"       'doom-bamboo)
+    ("solarized-osaka"  'doom-solarized-osaka)
+    (_                  'doom-one)))
+
+(defun joao/apply-doom-theme (theme)
+  "Apply THEME only if it is not already active."
+  (unless (eq doom-theme theme)
+    (mapc #'disable-theme custom-enabled-themes)
+    (setq doom-theme theme)
+    (load-theme theme t)
+    (message "Doom theme changed to %s" theme)))
+
+(defun joao/sync-omarchy-theme ()
+  "Synchronize the Omarchy theme with Doom."
+  (when-let* ((omarchy-theme (joao/omarchy-theme-name))
+              (doom-theme-name (joao/omarchy-to-doom-theme omarchy-theme)))
+    (unless (equal omarchy-theme joao/current-omarchy-theme)
+      (setq joao/current-omarchy-theme omarchy-theme)
+      (joao/apply-doom-theme doom-theme-name))))
+
+;; Apply theme on startup
+(add-hook 'doom-after-init-hook #'joao/sync-omarchy-theme)
+
+;; Timer: cancel the previous one (if any) before creating a new one.
+;; This avoids zombie timers on doom/reload.
+(when joao/omarchy-theme-timer
+  (cancel-timer joao/omarchy-theme-timer))
+(setq joao/omarchy-theme-timer
+      (run-with-timer 2 2 #'joao/sync-omarchy-theme))
+
+(setq org-directory "~/org/")
+
+(use-package! eglot-java
+  :hook (java-mode . eglot-java-mode))
