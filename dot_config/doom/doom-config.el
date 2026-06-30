@@ -78,4 +78,14 @@
 (setq org-directory "~/org/")
 
 (use-package! eglot-java
-  :hook (java-mode . eglot-java-mode))
+  :hook (java-mode . eglot-java-mode)
+  :config
+  (setq eglot-java-server-install-dir "/usr/share/java/jdtls/")
+  (setq eglot-java-eclipse-jdt-config-directory "~/.cache/jdtls/config_linux")
+  (setq eglot-java-user-init-opts-fn 'custom-eglot-java-init-opts)
+  (defun custom-eglot-java-init-opts (server eglot-java-eclipse-jdt)
+    "Load java-debug plugin."
+    '(:bundles ["/home/jfg/.local/share/java-debug/com.microsoft.java.debug.plugin-0.53.1.jar"]))
+  (add-hook 'eglot-managed-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook #'eglot-format-buffer -10 t))))
