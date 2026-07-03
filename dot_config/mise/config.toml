@@ -1,5 +1,14 @@
 [tools]
+# Linguagens / toolchains
 go = "latest"
 node = "latest"
 rust = "latest"
 java = "latest"
+
+# LSPs
+rust-analyzer = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+
+# Debugger / ferramentas de debug
+"go:github.com/go-delve/delve/cmd/dlv" = "latest"
+"github:vadimcn/codelldb" = { version = "latest", asset_pattern = "codelldb-linux-x64.vsix", bin_path = "extension/adapter" }

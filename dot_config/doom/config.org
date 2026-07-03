@@ -139,6 +139,14 @@ the equivalent Doom theme, polling every 2 seconds.
 (setq org-directory "~/org/")
 #+end_src
 
+** Compilation
+
+#+begin_src emacs-lisp
+(defadvice compile (before ad-compile-smart activate)
+  "Always run compilation in comint mode for interactivity."
+  (ad-set-arg 1 t))
+#+end_src
+
 * LSP
 ** Java (eglot + jdtls)
 
@@ -149,10 +157,70 @@ the equivalent Doom theme, polling every 2 seconds.
   (setq eglot-java-server-install-dir "/usr/share/java/jdtls/")
   (setq eglot-java-eclipse-jdt-config-directory "~/.cache/jdtls/config_linux")
   (setq eglot-java-user-init-opts-fn 'custom-eglot-java-init-opts)
+  (setq eglot-java-eclipse-jdt-args
+      '("-Xmx1G"
+        "--add-modules=ALL-SYSTEM"
+        "--add-opens" "java.base/java.util=ALL-UNNAMED"
+        "--add-opens" "java.base/java.lang=ALL-UNNAMED"
+        "-javaagent:/home/jfg/.local/share/java/lombok.jar"))
   (defun custom-eglot-java-init-opts (server eglot-java-eclipse-jdt)
     "Load java-debug plugin."
     '(:bundles ["/home/jfg/.local/share/java-debug/com.microsoft.java.debug.plugin-0.53.1.jar"]))
   (add-hook 'eglot-managed-mode-hook
             (lambda ()
-              (add-hook 'before-save-hook #'eglot-format-buffer -10 t))))
+              (add-hook 'before-save-hook #'eglot-format-buffer -10 t)))
+  (map! :map eglot-java-mode-map
+        :localleader
+        (:prefix ("j" . "Java")
+         :desc "New file"             "n" #'eglot-java-file-new
+         :desc "Run main"             "x" #'eglot-java-run-main
+         :desc "Run test"             "t" #'eglot-java-run-test
+         :desc "New project"          "N" #'eglot-java-project-new
+         :desc "Build task"           "T" #'eglot-java-project-build-task
+         :desc "Refresh project"      "R" #'eglot-java-project-build-refresh)))
+#+end_src
+
+** Rust
+
+#+begin_src emacs-lisp
+(after! rustic
+  (setq rustic-lsp-client 'eglot)
+  (setq rustic-analyzer-command '("rust-analyzer")))
+#+end_src
+
+** Eglot Documentation (eldoc-box)
+
+#+begin_src emacs-lisp
+(after! eglot
+  ;; Mantém signature help desligado (não gostou de ver toda hora)
+  (setq eglot-ignored-server-capabilities '(:signatureHelpProvider))
+
+  ;; Remove o aviso automático de code actions na echo area,
+  ;; sem desativar a feature em si (SPC c a continua funcionando)
+  (setq eglot-code-action-indications '()))
+
+(use-package! eldoc-box
+  :config
+  (map! :map eglot-mode-map
+        :n "K" #'eldoc-box-help-at-point))
+#+end_src
+
+* Debugger
+** Rust (dape + codelldb)
+
+#+begin_src emacs-lisp
+(use-package! dape
+  :config
+  (add-to-list 'dape-configs
+    `(codelldb-rust
+      modes (rust-mode rust-ts-mode rustic-mode)
+      command "codelldb"
+      command-args ("--port" :autoport "--settings" "{\"sourceLanguages\":[\"rust\"]}")
+      port :autoport
+      :type "lldb"
+      :request "launch"
+      :cwd dape-cwd
+      :program (expand-file-name
+                (file-name-concat "target" "debug" (file-name-base (buffer-file-name)))
+                (dape-cwd)))))
 #+end_src

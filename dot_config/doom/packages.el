@@ -53,3 +53,4 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 (package! eglot-java)
+(package! eldoc-box)
